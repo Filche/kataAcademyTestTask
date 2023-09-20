@@ -14,33 +14,63 @@ public class Main {
 
         System.out.println("Input:");
         String input = scanner.nextLine();
+        System.out.println(calc(input));
+
+    }
+
+    public static String calc(String input){
         input = input.replaceAll(" ", "");
+
+        int charIndex = input.indexOf('.');
+        if(charIndex != -1)
+            throw new InputMismatchException("Numbers must be integer");
+        charIndex = input.indexOf(',');
+        if(charIndex != -1)
+            throw new InputMismatchException("Numbers must be integer");
 
         operation = operatorSearch(input);
         if(operation == '\0')
-            throw new InputMismatchException("Invalid data format");       
+            throw new InputMismatchException("Invalid data format");
 
         String[] numbers = input.split("[+-/*]");
         String numStringFirst = numbers[0];
         String numStringSecond = numbers[1];
 
+        if(romanToNumber(numStringFirst) == -1 | romanToNumber(numStringSecond) == -1)
+            return arabicCalculation(numStringFirst, numStringSecond);
+        else
+            return romanCalculation(numStringFirst, numStringSecond);
+    }
+
+    public static String romanCalculation(String numStringFirst, String numStringSecond){
         numberFirst = romanToNumber(numStringFirst);
         numberSecond = romanToNumber(numStringSecond);
+
+        String resultRoman;
 
         if (numberFirst < 0 && numberSecond < 0) {
             result = 0;
         } else {
             result = calculation(numberFirst, numberSecond, operation);
-            System.out.println("Output:");
-            String resultRoman = convertNumToRoman(result);
-            System.out.println(numStringFirst + " " + operation + " " + numStringSecond + " = " + resultRoman);
         }
+
+        resultRoman = convertNumToRoman(result);
+        return "Output:\n" + numStringFirst + " " + operation + " " + numStringSecond + " = " + resultRoman;
+    }
+
+    public static String arabicCalculation(String numStringFirst, String numStringSecond){
 
         numberFirst = Integer.parseInt(numStringFirst);
         numberSecond = Integer.parseInt(numStringSecond);
+
+        if(numberFirst < 0 | numberSecond < 0)
+            throw new InputMismatchException("Numbers must to be more then 0");
+        if(numberFirst > 10 | numberSecond > 10)
+            throw new InputMismatchException("Numbers must to be less then 10");
+
         result = calculation(numberFirst, numberSecond, operation);
-        System.out.println("Output:");
-        System.out.println(numberFirst + " " + operation + " " + numberSecond + " = " + result);
+
+        return "Output:\n" + numberFirst + " " + operation + " " + numberSecond + " = " + result;
     }
 
     private static String convertNumToRoman (int number) {
